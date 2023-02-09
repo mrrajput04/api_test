@@ -1,29 +1,21 @@
 const http = require("http");
-const fs = require("fs");
-const insert = require('./insert')
+const insert = require("./index");
 
 const hostname = "127.0.0.1";
 
 const port = 3000;
 
-
 const dataReq = async (data) => {
-  const b = new Buffer.from(data, "utf-8").toString();
+  let b = Buffer.from(data, "utf-8").toString();
+  b = JSON.parse(b);
   console.log(b);
-  await insert("collection", "firstName", "lastName", "email", "password").then(
-    () => {
+  const x = await insert("users", b.firstName, b.email, b.lastName, b.password)
+    .then(() => {
       console.log("data send successfully");
-    }
-  );
+    })
+    .then(() => "DATA SAVE");
+  console.log(x, "--->");
   
-//   fs.writeFile("employee.json", b, async () => {
-//     try {
-//       await fs.promises.writeFile("employees.json", b, "utf8");
-//       console.log("data entered successfully");
-//     } catch (err) {
-//       console.error("Error occurred while reading directory!", err);
-//     }
-//   });
 };
 
 const server = http.createServer((req, res) => {
@@ -33,6 +25,7 @@ const server = http.createServer((req, res) => {
 
   if (req.method === "GET") {
     req.on("data", dataReq);
+
     res.end("get method");
     return;
   }
@@ -49,8 +42,7 @@ const server = http.createServer((req, res) => {
   if (req.method === "DELETE") {
     res.end("delete method ");
     return;
-  } 
-  else {
+  } else {
     res.statusCode = 400;
     console.log("error");
     res.end("400 not found");
