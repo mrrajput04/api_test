@@ -10,21 +10,32 @@ async function dbConnect(collection) {
 }
 
 const db = require("./db");
-const insert = async () => {
+const insert = async (collection,  firstName,  email, lastName, password ) => {
   await (
     await dbConnect("users")
   )
     .insertOne({
-      firstname: "mike",
-      email: "mike@gmail.com",
-      lastname: "baker",
-      password: 123456768,
+      firstName,
+      email,
+      lastName,
+      password,
     })
-    .then(() => console.log("data entered "));
+    .then(async(data,dob,Mobile_no) => {
+      await (
+            await dbConnect("userProfile")
+          )
+            .insertOne({
+              user_id:data._id,
+              dob,
+              Mobile_no
+            })
+            .then(() => console.log("data entered "));
+        })
 };
-insert();
 
-// dbConnect()
-//   .then(console.log)
-//   .catch(console.error)
-//   .finally(() => client.close());
+
+
+
+module.exports = insert;
+
+
