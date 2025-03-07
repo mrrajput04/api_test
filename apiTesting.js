@@ -1,20 +1,29 @@
 const http = require("http");
 const fs = require("fs");
+const insert = require('./insert')
 
 const hostname = "127.0.0.1";
 
 const port = 3000;
 
-const dataReq = (data) => {
+
+const dataReq = async (data) => {
   const b = new Buffer.from(data, "utf-8").toString();
-  fs.writeFile("employee.json", b, async () => {
-    try {
-      await fs.promises.writeFile("employees.json", b, "utf8");
-      console.log("data entered successfully");
-    } catch (err) {
-      console.error("Error occurred while reading directory!", err);
+  console.log(b);
+  await insert("collection", "firstName", "lastName", "email", "password").then(
+    () => {
+      console.log("data send successfully");
     }
-  });
+  );
+  
+//   fs.writeFile("employee.json", b, async () => {
+//     try {
+//       await fs.promises.writeFile("employees.json", b, "utf8");
+//       console.log("data entered successfully");
+//     } catch (err) {
+//       console.error("Error occurred while reading directory!", err);
+//     }
+//   });
 };
 
 const server = http.createServer((req, res) => {
@@ -40,7 +49,8 @@ const server = http.createServer((req, res) => {
   if (req.method === "DELETE") {
     res.end("delete method ");
     return;
-  } else {
+  } 
+  else {
     res.statusCode = 400;
     console.log("error");
     res.end("400 not found");
